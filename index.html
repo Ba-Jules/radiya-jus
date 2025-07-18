@@ -41,29 +41,21 @@
     .btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
     
     .hero {
-      position: relative; height: 80vh; /* Hauteur réduite pour laisser place à la nouvelle section */
+      position: relative; height: 80vh; 
       background: url('assets/hero_banner.png') no-repeat center center/cover;
     }
     .hero::after {
       content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(18,18,18,0.3); /* Moins de dégradé pour mieux voir l'image */
+      background: rgba(18,18,18,0.3);
     }
 
-    /* NOUVELLE SECTION D'INTRODUCTION */
     .intro-section {
-        padding: 80px 5%;
-        text-align: center;
-        max-width: 700px;
-        margin: -10vh auto 0; /* Chevauche légèrement la bannière pour un effet premium */
-        position: relative;
-        z-index: 2;
-        background: var(--bg-dark);
-        border-radius: 16px;
-        border: 1px solid var(--border-color);
+        padding: 80px 5%; text-align: center; max-width: 700px; margin: -10vh auto 0;
+        position: relative; z-index: 2; background: var(--bg-dark); border-radius: 16px; border: 1px solid var(--border-color);
     }
     .intro-section h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 800; line-height: 1.1; margin-bottom: 1rem; }
     .intro-section p { font-size: clamp(1rem, 2.5vw, 1.25rem); color: var(--text-muted); margin-bottom: 2rem; }
-    .intro-section .hero-buttons { display: flex; justify-content: center; gap: 1rem; }
+    .intro-section .hero-buttons { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
 
     #produits { padding: 100px 5%; }
     .section-title { text-align: center; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: 4rem;
@@ -88,7 +80,36 @@
     .contact-info a:hover { color: var(--accent-color); }
     .copyright { margin-top: 2rem; font-size: 0.9rem; color: #666; }
 
-    .modal-overlay { /* ... Styles de la modale inchangés ... */ }
+    /* --- STYLE DU FORMULAIRE CORRIGÉ --- */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+      display: none; /* <-- LA LIGNE CRUCIALE QUI MANQUAIT */
+      justify-content: center; align-items: center; z-index: 2000; padding: 1rem;
+    }
+    .modal-content {
+      background: #2a2a2a; border-radius: 16px; padding: 2rem; width: 100%; max-width: 600px;
+      max-height: 90vh; overflow-y: auto; position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white;
+      font-size: 2rem; cursor: pointer; line-height: 1;
+    }
+    .modal-content h2 { margin-bottom: 2rem; text-align: center; }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); }
+    .form-group input, .form-group textarea {
+      width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444;
+      background: #333; color: white; font-size: 1rem; font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .order-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .order-item-details { display: flex; flex-direction: column; }
+    .order-item-details span:first-child { font-weight: 700; }
+    .order-item-details span:last-child { font-size: 0.9rem; color: var(--text-muted); }
+    .order-item input { width: 70px; text-align: center; }
+    .order-total {
+      text-align: right; font-size: 1.5rem; font-weight: 800; margin-top: 2rem;
+      padding-top: 1.5rem; border-top: 1px solid var(--border-color);
+    }
   </style>
 </head>
 <body>
@@ -113,7 +134,6 @@
   <section id="produits">
     <h2 class="section-title" data-aos="fade-up">Nos Délicieux Jus</h2>
     <div class="products-grid">
-      <!-- STRUCTURE HTML CORRIGÉE POUR TOUS LES PRODUITS -->
       <div class="product-card" data-aos="fade-up" data-aos-delay="100"><img src="assets/bissap_menthe.png" alt="Jus de Bissap Menthe"><div class="product-content"><h3>Bissap Menthe</h3><p>La fraîcheur de la menthe alliée à la puissance de l'hibiscus.</p><div class="product-price">350 FCFA <span>(250ml)</span> | 2000 FCFA <span>(1.5L)</span></div></div></div>
       <div class="product-card" data-aos="fade-up" data-aos-delay="200"><img src="assets/bissap_orange.png" alt="Jus de Bissap Orange"><div class="product-content"><h3>Bissap Orange</h3><p>La douceur de l'orange sublime le goût acidulé de l'hibiscus.</p><div class="product-price">400 FCFA <span>(250ml)</span> | 2500 FCFA <span>(1.5L)</span></div></div></div>
       <div class="product-card" data-aos="fade-up" data-aos-delay="300"><img src="assets/bouye_fraise.png" alt="Jus de Bouye Fraise"><div class="product-content"><h3>Bouye Fraise</h3><p>La douceur du pain de singe réhaussée par la gourmandise de la fraise.</p><div class="product-price">500 FCFA <span>(250ml)</span> | 3000 FCFA <span>(1.5L)</span></div></div></div>
@@ -143,7 +163,6 @@
     <h2>Votre Commande</h2>
     
     <form action="https://api.web3forms.com/submit" method="POST">
-      <!-- CLÉ CORRIGÉE AVEC LES GUILLEMETS -->
       <input type="hidden" name="access_key" value="1c1a258f-c10b-4450-a095-a9dc7b0c0085">
       <input type="hidden" name="subject" value="Nouvelle Commande de Jus Radiya!">
       <input type="hidden" name="from_name" value="Site Web Radiya">
@@ -154,7 +173,7 @@
       <h3>Choisissez vos jus :</h3>
       <div id="order-list" style="margin-top: 1.5rem;"></div>
       <div class="order-total">Total : <span id="total-price">0</span> FCFA</div>
-      <div class="form-group" style="margin-top: 2rem;"><label for="comments">Commentaires ou adresse de livraison</label><textarea id="comments" name="commentaires" rows="3" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: white; font-size: 1rem;"></textarea></div>
+      <div class="form-group" style="margin-top: 2rem;"><label for="comments">Commentaires ou adresse de livraison</label><textarea id="comments" name="commentaires" rows="3"></textarea></div>
       <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Envoyer la Commande</button>
     </form>
   </div>
@@ -171,7 +190,7 @@
     { name: 'Maade Passion (250ml)', price: 500 }, { name: 'Maade Passion (1.5L)', price: 3000 },
     { name: 'Maade Ananas (250ml)', price: 500 }, { name: 'Maade Ananas (1.5L)', price: 3000 },
     { name: 'Ananas Passion (250ml)', price: 500 }, { name: 'Ananas Passion (1.5L)', price: 3000 },
-    { name: 'Bouye Ananas (250ml)', price: 500 }, { name: 'Bouye Ananas (1.5L)', price: 3000 }, // Nouveau produit ajouté
+    { name: 'Bouye Ananas (250ml)', price: 500 }, { name: 'Bouye Ananas (1.5L)', price: 3000 },
   ];
   const modal = document.getElementById('order-modal');
   const orderListContainer = document.getElementById('order-list');
