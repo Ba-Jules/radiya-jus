@@ -80,11 +80,9 @@
     .contact-info a:hover { color: var(--accent-color); }
     .copyright { margin-top: 2rem; font-size: 0.9rem; color: #666; }
 
-    /* --- STYLE DU FORMULAIRE CORRIGÉ --- */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
-      display: none; /* <-- LA LIGNE CRUCIALE QUI MANQUAIT */
-      justify-content: center; align-items: center; z-index: 2000; padding: 1rem;
+      display: none; justify-content: center; align-items: center; z-index: 2000; padding: 1rem;
     }
     .modal-content {
       background: #2a2a2a; border-radius: 16px; padding: 2rem; width: 100%; max-width: 600px;
@@ -162,14 +160,19 @@
     <button id="close-modal" class="modal-close">×</button>
     <h2>Votre Commande</h2>
     
-    <form action="https://formspree.io/f/xyzpzoke" method="POST">
- 
+    <form id="order-form" action="https://formspree.io/f/xyzpzoke" method="POST">
+      <!-- AJOUT 1 : Le champ caché pour la redirection -->
+      <input type="hidden" name="_next" value="https://ba-jules.github.io/radiya-jus/">
 
       <div class="form-group"><label for="name">Votre Nom</label><input type="text" id="name" name="nom" required></div>
       <div class="form-group"><label for="phone">Votre Numéro de Téléphone</label><input type="tel" id="phone" name="telephone" required></div>
       <hr style="border-color: var(--border-color); margin: 2rem 0;">
       <h3>Choisissez vos jus :</h3>
       <div id="order-list" style="margin-top: 1.5rem;"></div>
+      
+      <!-- AJOUT 2 : Le champ caché pour le total -->
+      <input type="hidden" name="Total_de_la_Commande" id="total-input">
+      
       <div class="order-total">Total : <span id="total-price">0</span> FCFA</div>
       <div class="form-group" style="margin-top: 2rem;"><label for="comments">Commentaires ou adresse de livraison</label><textarea id="comments" name="commentaires" rows="3"></textarea></div>
       <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Envoyer la Commande</button>
@@ -190,18 +193,39 @@
     { name: 'Ananas Passion (250ml)', price: 500 }, { name: 'Ananas Passion (1.5L)', price: 3000 },
     { name: 'Bouye Ananas (250ml)', price: 500 }, { name: 'Bouye Ananas (1.5L)', price: 3000 },
   ];
+  
   const modal = document.getElementById('order-modal');
   const orderListContainer = document.getElementById('order-list');
   const totalPriceEl = document.getElementById('total-price');
+  
+  // AJOUT 2 (suite) : On récupère le champ caché du total
+  const totalInput = document.getElementById('total-input');
+
   products.forEach(p => {
     orderListContainer.innerHTML += `<div class="order-item"><div class="order-item-details"><span>${p.name}</span><span>${p.price.toLocaleString('fr-FR')} FCFA</span></div><input type="number" class="form-group-input quantity-input" name="quantite_${p.name.replace(/[()\s.,]/g, '_')}" min="0" placeholder="0" data-price="${p.price}"></div>`;
   });
+
   const quantityInputs = document.querySelectorAll('.quantity-input');
+  
   function calculateTotal() {
     let total = Array.from(quantityInputs).reduce((sum, input) => sum + (parseInt(input.value) || 0) * parseFloat(input.dataset.price), 0);
     totalPriceEl.textContent = total.toLocaleString('fr-FR');
+    // AJOUT 2 (suite) : On met à jour la valeur du champ caché
+    totalInput.value = total.toLocaleString('fr-FR') + ' FCFA';
   }
+
   quantityInputs.forEach(input => input.addEventListener('input', calculateTotal));
+
+  // AJOUT 3 : La logique pour nettoyer le formulaire avant envoi
+  const orderForm = document.getElementById('order-form');
+  orderForm.addEventListener('submit', function() {
+    quantityInputs.forEach(input => {
+      if (!input.value || parseInt(input.value) === 0) {
+        input.disabled = true;
+      }
+    });
+  });
+
   const openButtons = [document.getElementById('open-order-form-header'), document.getElementById('open-order-form-hero')];
   const closeButton = document.getElementById('close-modal');
   openButtons.forEach(btn => btn.addEventListener('click', () => modal.style.display = 'flex'));
